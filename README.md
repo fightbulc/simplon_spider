@@ -125,6 +125,32 @@ $data = Spider::parse($html, 'http://cnn.com'); // URL is needed to rebuild abso
 echo json_encode($data); // json encode result
 ```
 
+### Result in both cases
+
+```json
+{
+   "title":"Breaking News, U.S., World, Weather, Entertainment & Video News - CNN.com",
+   "description":"Find the latest breaking news and information on the top stories, weather, business, entertainment, politics, and more. For in-depth coverage, CNN provides special reports, video, audio, photo galleries, and interactive guides",
+   "keywords":"breaking news, news online, U.S. news, world news, developing story, news video, CNN news, weather, business, money, politics, law, technology, entertainment, education, travel, health, special reports, autos, CNN TV",
+   "images":[
+      "http://cnn.com/data:image/gif;base64,R0lGODlhEAAJAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAQAAkAAAIKlI+py+0Po5yUFQA7",
+      "http://i2.cdn.turner.com/cnnnext/dam/assets/150901143136-budapest-migrant-protest-fists-large-169.jpg",
+      "http://i2.cdn.turner.com/cnnnext/dam/assets/110902115913-gates-of-auschwitz-large-169.jpg"
+   ],
+   "open-graph":{
+      "pubdate":"2014-02-24T14:45:54Z",
+      "url":"http://www.cnn.com",
+      "title":"Breaking News, U.S., World, Weather, Entertainment &amp; Video News - CNN.com",
+      "description":"Find the latest breaking news and information on the top stories, weather, business, entertainment, politics, and more. For in-depth coverage, CNN provides special reports, video, audio, photo galleries, and interactive guides",
+      "site_name":"CNN",
+      "type":"website"
+   },
+   "twitter":{
+      "card":"summary_large_image"
+   }
+}
+```
+
 -------------------------------------------------
 
 # License
