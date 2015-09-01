@@ -1,0 +1,34 @@
+{
+  "name": "simplon/spider",
+  "description": "Retrieve a website's essential information",
+  "homepage": "https://github.com/fightbulc/simplon_spider",
+  "type": "library",
+  "keywords": [
+    "website",
+    "page",
+    "meta",
+    "information",
+    "spider"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tino Ehrich",
+      "email": "tino@bigpun.me",
+      "role": "developer"
+    }
+  ],
+  "require": {
+    "php": ">=5.4",
+    "simplon/request": "0.3.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.8.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Simplon\\Spider\\": "src/",
+      "Tests\\": "tests/"
+    }
+  }
+}
