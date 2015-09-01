@@ -21,7 +21,7 @@ class Spider
     {
         try
         {
-            $response = Request::get($url);
+            $response = Request::get($url, [], [CURLOPT_FOLLOWLOCATION => 1, CURLOPT_SSL_VERIFYPEER => false]);
 
             if ($response->getHttpCode() === 200)
             {
