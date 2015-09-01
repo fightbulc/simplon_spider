@@ -13,6 +13,8 @@
 
 -------------------------------------------------
 
+[![Build Status](https://travis-ci.org/fightbulc/simplon_spider.svg?branch=master)](https://travis-ci.org/fightbulc/simplon_spider)
+
 # Intro
 
 ### What is simplon/spider?
