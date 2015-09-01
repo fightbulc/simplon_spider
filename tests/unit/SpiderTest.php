@@ -3,6 +3,7 @@
 namespace Tests\unit;
 
 use Simplon\Spider\Spider;
+use Simplon\Spider\SpiderException;
 
 /**
  * Class SpiderTest
@@ -70,5 +71,17 @@ class SpiderTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('https://farm6.staticflickr.com/5510/14338202952_93595258ff_z.jpg', $data['images']);
         $this->assertContains('http://foo.com/foobar.png', $data['images']);
         $this->assertContains('http://foo.com/sizzle.png', $data['images']);
+    }
+
+    public function testHttpException()
+    {
+        $this->setExpectedExceptionRegExp('Simplon\Spider\SpiderException', '/Requested page could not be retrieved. Received http code:/', SpiderException::HTTP_ERROR_CODE);
+        Spider::fetchParse('https://pushcast.io/foobar/barfoo');
+    }
+
+    public function testRequestException()
+    {
+        $this->setExpectedExceptionRegExp('Simplon\Spider\SpiderException', '/Requested page could not be retrieved. Received message:/', SpiderException::REQUEST_ERROR_CODE);
+        Spider::fetchParse('https://foooo-12313231313-johnny-bravo.com');
     }
 }

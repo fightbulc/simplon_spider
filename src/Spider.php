@@ -3,6 +3,7 @@
 namespace Simplon\Spider;
 
 use Simplon\Request\Request;
+use Simplon\Request\RequestException;
 
 /**
  * Class Spider
@@ -18,14 +19,25 @@ class Spider
      */
     public static function fetchParse($url)
     {
-        $response = Request::get($url);
-
-        if ($response->getHttpCode() === 200)
+        try
         {
-            return self::parse($response->getBody(), $response->getLastUrl());
+            $response = Request::get($url);
+
+            if ($response->getHttpCode() === 200)
+            {
+                return self::parse($response->getBody(), $response->getLastUrl());
+            }
+
+            $error = 'Requested page could not be retrieved. Received http code: ' . $response->getHttpCode();
+            $code = SpiderException::HTTP_ERROR_CODE;
+        }
+        catch (RequestException $e)
+        {
+            $error = 'Requested page could not be retrieved. Received message: ' . $e->getMessage();
+            $code = SpiderException::REQUEST_ERROR_CODE;
         }
 
-        throw new SpiderException('Requested page could not be retrieved. Received http code: ' . $response->getHttpCode());
+        throw new SpiderException($error, $code);
     }
 
     /**
