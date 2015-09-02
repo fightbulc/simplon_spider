@@ -55,7 +55,6 @@ However, Facebook's scraper does not give you all essential data.
 
 ```json
 {
-   "url": "http:\/\/www.cnn.com\/",
    "title":"Breaking News, U.S., World, Weather, Entertainment & Video News - CNN.com",
    "description":"Find the latest breaking news and information on the top stories, weather, business, entertainment, politics, and more. For in-depth coverage, CNN provides special reports, video, audio, photo galleries, and interactive guides",
    "keywords":"breaking news, news online, U.S. news, world news, developing story, news video, CNN news, weather, business, money, politics, law, technology, entertainment, education, travel, health, special reports, autos, CNN TV",
