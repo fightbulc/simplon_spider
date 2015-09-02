@@ -25,7 +25,15 @@ class Spider
 
             if ($response->getHttpCode() === 200)
             {
-                return self::parse($response->getBody(), $response->getLastUrl());
+                $body = $response->getBody();
+
+                // catch non-utf8 documents
+                if (empty($response->getHeader()['content-type']) === false && strpos($response->getHeader()['content-type'], 'ISO-8859-1') !== false)
+                {
+                    $body = utf8_encode($body);
+                }
+
+                return self::parse($body, $response->getLastUrl());
             }
 
             $error = 'Requested page could not be retrieved. Received http code: ' . $response->getHttpCode();
@@ -57,6 +65,17 @@ class Spider
         }
 
         // --------------------------------------
+        // add url
+
+        if ($url !== null)
+        {
+            // lets rebuild the url in case we got a prior redirect to a file path
+            $components = parse_url($url);
+            $url = $components['scheme'] . '://' . $components['host'];
+            $data['url'] = $url;
+        }
+
+        // --------------------------------------
         // and now lets get meta etc.
 
         $parsedOpenTagElements = self::parseOpenTag($html, ['meta', 'img', 'link']);
@@ -76,29 +95,9 @@ class Spider
 
         $images = self::aggregateImages($parsedOpenTagElements, $url);
 
-        if ($images !== null)
+        if ($images === null)
         {
-            $data['images'] = $images;
-        }
-
-        // --------------------------------------
-        // handle facebook open graph
-
-        $openGraph = self::aggregateOpenGraph($parsedOpenTagElements);
-
-        if ($openGraph !== null)
-        {
-            $data['open-graph'] = $openGraph;
-
-            $addImage =
-                empty($openGraph['image']) === false
-                && empty($images) === false
-                && in_array($openGraph['image'], $images) === false;
-
-            if ($addImage)
-            {
-                $data['images'][] = $openGraph['image'];
-            }
+            $images = [];
         }
 
         // --------------------------------------
@@ -117,7 +116,39 @@ class Spider
 
             if ($addImage)
             {
-                $data['images'][] = $twitter['image'];
+                array_unshift($images, $twitter['image']);
+            }
+        }
+
+        // --------------------------------------
+        // handle facebook open graph
+
+        $openGraph = self::aggregateOpenGraph($parsedOpenTagElements);
+
+        if ($openGraph !== null)
+        {
+            $data['openGraph'] = $openGraph;
+
+            $addImage =
+                empty($openGraph['image']) === false
+                && empty($images) === false
+                && in_array($openGraph['image'], $images) === false;
+
+            if ($addImage)
+            {
+                array_unshift($images, $openGraph['image']);
+            }
+        }
+
+        // --------------------------------------
+        // add images
+
+        foreach ($images as $src)
+        {
+            // filter out data:image
+            if (strpos($src, 'data:image') === false)
+            {
+                $data['images'][] = $src;
             }
         }
 
@@ -138,7 +169,7 @@ class Spider
 
         foreach ($metaData as $meta)
         {
-            $data[str_replace('og:', '', $meta['property'])] = $meta['content'];
+            $data[str_replace('og:', '', strtolower($meta['property']))] = $meta['content'];
         }
 
         return empty($data) === false ? $data : null;
@@ -156,7 +187,7 @@ class Spider
 
         foreach ($metaData as $meta)
         {
-            $data[str_replace('twitter:', '', $meta['name'])] = isset($meta['content']) ? $meta['content'] : $meta['value'];
+            $data[str_replace('twitter:', '', strtolower($meta['name']))] = isset($meta['content']) ? $meta['content'] : $meta['value'];
         }
 
         return empty($data) === false ? $data : null;
@@ -175,7 +206,7 @@ class Spider
 
         foreach ($elements as $meta)
         {
-            $data[$meta['name']] = $meta['content'];
+            $data[strtolower($meta['name'])] = $meta['content'];
         }
 
         return empty($data) === false ? $data : null;
@@ -258,7 +289,9 @@ class Spider
 
         foreach ($tags as $tag => $tagLabel)
         {
-            if ($matchedTags = self::regexMany($html, '/<\s*' . $tag . '\s*>(.*?)<\s*\/\s*' . $tag . '\s*>/i'))
+            $tagLabel = strtolower($tagLabel);
+
+            if ($matchedTags = self::regexMany($html, '/<\s*' . $tag . '\s*>(.*?)<\s*\/\s*' . $tag . '\s*>/ui'))
             {
                 foreach ($matchedTags as $matched)
                 {
@@ -297,7 +330,7 @@ class Spider
         {
             foreach ($parsedOpenTagElements[$tag] as $elm)
             {
-                $matchesAttr = $attr !== null && isset($elm[$attr]) && ($regexFilter === null || preg_match('/' . $regexFilter . '/i', $elm[$attr]));
+                $matchesAttr = $attr !== null && isset($elm[$attr]) && ($regexFilter === null || preg_match('/' . $regexFilter . '/ui', $elm[$attr]));
 
                 if ($attr === null || $matchesAttr)
                 {
