@@ -93,12 +93,7 @@ class Spider
         // --------------------------------------
         // add all image data
 
-        $images = self::aggregateImages($parsedOpenTagElements, $url);
-
-        if ($images === null)
-        {
-            $images = [];
-        }
+        $data['images'] = self::aggregateImages($parsedOpenTagElements, $url);
 
         // --------------------------------------
         // handle twitter
@@ -111,12 +106,12 @@ class Spider
 
             $addImage =
                 empty($twitter['image']) === false
-                && empty($images) === false
-                && in_array($twitter['image'], $images) === false;
+                && empty($data['images']) === false
+                && in_array($twitter['image'], $data['images']) === false;
 
             if ($addImage)
             {
-                array_unshift($images, $twitter['image']);
+                array_unshift($data['images'], $twitter['image']);
             }
         }
 
@@ -131,24 +126,12 @@ class Spider
 
             $addImage =
                 empty($openGraph['image']) === false
-                && empty($images) === false
-                && in_array($openGraph['image'], $images) === false;
+                && empty($data['images']) === false
+                && in_array($openGraph['image'], $data['images']) === false;
 
             if ($addImage)
             {
-                array_unshift($images, $openGraph['image']);
-            }
-        }
-
-        // --------------------------------------
-        // add images
-
-        foreach ($images as $src)
-        {
-            // filter out data:image
-            if (strpos($src, 'data:image') === false)
-            {
-                $data['images'][] = $src;
+                array_unshift($data['images'], $openGraph['image']);
             }
         }
 
@@ -216,7 +199,7 @@ class Spider
      * @param array $parsedOpenTagElements
      * @param null|string $urlRoot
      *
-     * @return array|null
+     * @return array
      */
     private static function aggregateImages(array $parsedOpenTagElements, $urlRoot = null)
     {
@@ -233,14 +216,14 @@ class Spider
             {
                 $url = self::fixRelativeUrls($type === 'link' ? $attrs['href'] : $attrs['src'], $urlRoot);
 
-                if (in_array($url, $data) === false)
+                if (strpos($url, 'data:image') === false && in_array($url, $data) === false)
                 {
                     $data[] = $url;
                 }
             }
         }
 
-        return empty($data) === false ? $data : null;
+        return $data;
     }
 
     /**
@@ -330,7 +313,7 @@ class Spider
         {
             foreach ($parsedOpenTagElements[$tag] as $elm)
             {
-                $matchesAttr = $attr !== null && isset($elm[$attr]) && ($regexFilter === null || preg_match('/' . $regexFilter . '/ui', $elm[$attr]));
+                $matchesAttr = $attr !== null && isset($elm[$attr]) && ($regexFilter === null || preg_match('/' . $regexFilter . '/i', $elm[$attr]));
 
                 if ($attr === null || $matchesAttr)
                 {

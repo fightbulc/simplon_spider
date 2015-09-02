@@ -29,23 +29,26 @@ class SpiderTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('keywords', $data);
         $this->assertEquals('THESE ARE KEYWORDS', $data['keywords']);
 
+        $this->assertArrayHasKey('url', $data);
+        $this->assertEquals('http://foo.com', $data['url']);
+
         // test open graph
-        $this->assertArrayHasKey('open-graph', $data);
+        $this->assertArrayHasKey('openGraph', $data);
 
-        $this->assertArrayHasKey('type', $data['open-graph']);
-        $this->assertEquals('WEBSITE', $data['open-graph']['type']);
+        $this->assertArrayHasKey('type', $data['openGraph']);
+        $this->assertEquals('WEBSITE', $data['openGraph']['type']);
 
-        $this->assertArrayHasKey('title', $data['open-graph']);
-        $this->assertEquals('THIS IS A OG:TITLE', $data['open-graph']['title']);
+        $this->assertArrayHasKey('title', $data['openGraph']);
+        $this->assertEquals('THIS IS A OG:TITLE', $data['openGraph']['title']);
 
-        $this->assertArrayHasKey('description', $data['open-graph']);
-        $this->assertEquals('THIS IS A OG:DESCRIPTION', $data['open-graph']['description']);
+        $this->assertArrayHasKey('description', $data['openGraph']);
+        $this->assertEquals('THIS IS A OG:DESCRIPTION', $data['openGraph']['description']);
 
-        $this->assertArrayHasKey('image', $data['open-graph']);
-        $this->assertEquals('http://foo.com/bar.png', $data['open-graph']['image']);
+        $this->assertArrayHasKey('image', $data['openGraph']);
+        $this->assertEquals('http://foo.com/bar.png', $data['openGraph']['image']);
 
-        $this->assertArrayHasKey('url', $data['open-graph']);
-        $this->assertEquals('http://foo.com', $data['open-graph']['url']);
+        $this->assertArrayHasKey('url', $data['openGraph']);
+        $this->assertEquals('http://foo.com', $data['openGraph']['url']);
 
         // test twitter
         $this->assertArrayHasKey('twitter', $data);
@@ -71,6 +74,7 @@ class SpiderTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('https://farm6.staticflickr.com/5510/14338202952_93595258ff_z.jpg', $data['images']);
         $this->assertContains('http://foo.com/foobar.png', $data['images']);
         $this->assertContains('http://foo.com/sizzle.png', $data['images']);
+        $this->assertNotContains('http://foo.com/data:image/gif;base64,R0lGODlhEAAJAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAQAAkAAAIKlI+py+0Po5yUFQA7', $data['images']);
     }
 
     public function testHttpException()
