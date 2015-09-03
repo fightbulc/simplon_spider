@@ -248,7 +248,7 @@ class Spider
 
                         foreach ($matchedAttrs as $index => $attrs)
                         {
-                            $_[$attrs[1]] = $attrs[2];
+                            $_[strtolower($attrs[1])] = $attrs[2];
                         }
 
                         $data[$tag][] = $_;
