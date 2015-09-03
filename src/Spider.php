@@ -351,9 +351,16 @@ class Spider
     {
         if ($urlRoot !== null)
         {
-            if (strpos($urlItem, 'http') === false)
+            $parsedUrlRoot = parse_url($urlRoot);
+            $parsedUrlItem = parse_url($urlItem);
+
+            if (empty($parsedUrlItem['host']) === true)
             {
                 $urlItem = trim($urlRoot, '/') . '/' . trim($urlItem, '/');
+            }
+            elseif (empty($parsedUrlItem['scheme']) === true)
+            {
+                $urlItem = $parsedUrlRoot['scheme'] . ':' . $urlItem;
             }
         }
 

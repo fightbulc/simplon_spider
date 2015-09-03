@@ -74,6 +74,7 @@ class SpiderTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('https://farm6.staticflickr.com/5510/14338202952_93595258ff_z.jpg', $data['images']);
         $this->assertContains('http://foo.com/foobar.png', $data['images']);
         $this->assertContains('http://foo.com/sizzle.png', $data['images']);
+        $this->assertContains('http://foo.com/an-image.png', $data['images']);
         $this->assertNotContains('http://foo.com/data:image/gif;base64,R0lGODlhEAAJAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAQAAkAAAIKlI+py+0Po5yUFQA7', $data['images']);
     }
 
