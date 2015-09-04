@@ -23,7 +23,13 @@ class Spider
     {
         try
         {
-            $response = Request::get($url, [], [CURLOPT_FOLLOWLOCATION => 1, CURLOPT_SSL_VERIFYPEER => false]);
+            $options = [
+                CURLOPT_FOLLOWLOCATION => 1,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_USERAGENT      => 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36',
+            ];
+
+            $response = Request::get($url, [], $options);
 
             if ($response->getHttpCode() === 200)
             {
