@@ -11,6 +11,8 @@ use Simplon\Request\RequestException;
  */
 class Spider
 {
+    private static $lastUrl;
+
     /**
      * @param string $url
      *
@@ -33,7 +35,9 @@ class Spider
                     $body = utf8_encode($body);
                 }
 
-                return self::parse($body, $response->getLastUrl());
+                self::$lastUrl = $response->getLastUrl();
+
+                return self::parse($body, $url);
             }
 
             $error = 'Requested page could not be retrieved. Received http code: ' . $response->getHttpCode();
@@ -69,10 +73,14 @@ class Spider
 
         if ($url !== null)
         {
-            // lets rebuild the url in case we got a prior redirect to a file path
-            $components = parse_url($url);
-            $url = $components['scheme'] . '://' . $components['host'];
             $data['url'] = $url;
+
+            // lets rebuild the url in case we got a prior redirect to a file path
+            if (self::$lastUrl !== null)
+            {
+                $components = parse_url(self::$lastUrl);
+                $url = $components['scheme'] . '://' . $components['host'];
+            }
         }
 
         // --------------------------------------
@@ -137,6 +145,9 @@ class Spider
 
         // --------------------------------------
 
+        // reset last url
+        self::$lastUrl = null;
+
         return $data;
     }
 
@@ -152,7 +163,10 @@ class Spider
 
         foreach ($metaData as $meta)
         {
-            $data[str_replace('og:', '', strtolower($meta['property']))] = $meta['content'];
+            if (empty($meta['content']) === false)
+            {
+                $data[str_replace('og:', '', strtolower($meta['property']))] = $meta['content'];
+            }
         }
 
         return empty($data) === false ? $data : null;
@@ -242,13 +256,13 @@ class Spider
             {
                 foreach ($matchedTags as $match)
                 {
-                    if ($matchedAttrs = self::regexMany($match[1], '/(\w+)="(.*?)"/i'))
+                    if ($matchedAttrs = self::regexMany($match[1], '/(\w+)=(\'|")(.*?)(\'|")/i'))
                     {
                         $_ = [];
 
                         foreach ($matchedAttrs as $index => $attrs)
                         {
-                            $_[strtolower($attrs[1])] = $attrs[2];
+                            $_[strtolower($attrs[1])] = $attrs[3];
                         }
 
                         $data[$tag][] = $_;
