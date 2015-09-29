@@ -36,7 +36,7 @@ class Spider
                 $body = $response->getBody();
 
                 // catch non-utf8 documents
-                if (empty($response->getHeader()['content-type']) === false && strpos($response->getHeader()['content-type'], 'ISO-8859-1') !== false)
+                if (strpos($response->getHeader()->getContentType(), 'ISO-8859-1') !== false)
                 {
                     $body = utf8_encode($body);
                 }
