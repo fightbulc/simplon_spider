@@ -238,7 +238,7 @@ class Spider
 
                 if (strpos($url, 'data:image') === false && in_array($url, $data) === false)
                 {
-                    $data[] = $url;
+                    $data[] = htmlspecialchars_decode($url);
                 }
             }
         }
